@@ -1,3 +1,6 @@
+# Redirect URL is http://127.0.0.1:9899/login for this app to work.
+# update api key and secrit key in .env file in home directory
+
 ###############################################################################
 #
 # The MIT License (MIT)
@@ -10,7 +13,7 @@
 # To run this you need Kite Connect python client and Flask webserver
 #
 #   pip install Flask
-#   pip install kiteconnect
+#   pip install kiteconnect dotenv
 #
 #   python examples/flask_app.py
 ###############################################################################
@@ -22,6 +25,8 @@ from decimal import Decimal
 
 from flask import Flask, request, jsonify, session
 from kiteconnect import KiteConnect
+from dotenv import load_dotenv
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -35,8 +40,8 @@ def serializer(obj): return isinstance(obj, (date, datetime, Decimal)) and str(o
 
 # Kite Connect App settings. Go to https://developers.kite.trade/apps/
 # to create an app if you don't have one.
-kite_api_key = "kite_api_key"
-kite_api_secret = "kite_api_secret"
+kite_api_key = os.getenv("KITE_API_KEY", "kite_api_key")
+kite_api_secret = os.getenv("KITE_API_SECRET", "kite_api_secret")
 
 # Create a redirect url
 redirect_url = "http://{host}:{port}/login".format(host=HOST, port=PORT)
@@ -88,6 +93,7 @@ def index():
 
 @app.route("/login")
 def login():
+    # request_token is passed here
     request_token = request.args.get("request_token")
 
     if not request_token:
